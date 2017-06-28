@@ -492,10 +492,15 @@ touchid_verify(struct passwd *pw, char *pass, sudo_auth *auth, struct sudo_conv_
         [context evaluatePolicy:(result != kTouchIDResultFallback ? kAuthPolicy : kAuthPolicyFallback) localizedReason:@"authenticate a privileged operation" reply:^(BOOL success, NSError *error) {
             result = success ? kTouchIDResultAllowed : kTouchIDResultFailed;
             switch (error.code) {
+                case LAErrorTouchIDLockout:
+                case LAErrorTouchIDNotEnrolled:
                 case LAErrorTouchIDNotAvailable:
                 case LAErrorUserFallback:
+                case LAErrorAuthenticationFailed:
                     result = kTouchIDResultFallback;
                     break;
+                case LAErrorSystemCancel:
+                case LAErrorAppCancel:
                 case LAErrorUserCancel:
                     result = kTouchIDResultCancel;
                     break;
